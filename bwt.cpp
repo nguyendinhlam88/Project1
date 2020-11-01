@@ -119,8 +119,8 @@ char* inverseBWT(char* bwt, int n, int k){
 	return Q;
 }
 
-unsigned short int* MTF(char* bwt, int n, string characters, int m){
-	int* mtf = int[];
+int* MTF(char* bwt, int n, string characters, int m){
+	int* mtf = int[n];
 	for(int i = 0; i < n; i++){
 		int pos = characters.find(bwt[i]);
 		mtf[i] = pos;
