@@ -2,12 +2,20 @@
 #include <algorithm>
 #include <string.h>
 #include <map>
+#include <fstream>
 
 using namespace std;
 
 struct Rotation{
 	int index;
 	char* suffix;
+};
+
+struct Node{ //For huffman.
+	char ch; //Nút lá mới có.
+	int fre; //Trọng số của nút(tần số).
+	Node* left;
+	Node* right;
 };
 
 bool cmpRotation(Rotation tmp1, Rotation tmp2){
@@ -57,6 +65,7 @@ int* computeSuffixArrayIndex(char* text, int n, int &k){
 	return suffix_arr_index;
 }
 
+//BWT
 char* getLastColumn(char* text, int* suffix_arr_index, int n){
 	char* bwt = new char[n];
 	int index;
@@ -69,18 +78,19 @@ char* getLastColumn(char* text, int* suffix_arr_index, int n){
 	return bwt;
 }
 
-//Inverse ngược từ n -> 1.
+//Inverse BWT
 char* inverseBWT(char* bwt, int n, int k){
 	//Mảng lưu trữ xâu sau khi khôi phục.
 	char* Q = new char[n];
 
-	//Mảng lưu trữ vị trí đầu tiên của các ký tự theo thứ tự trong F.
-	map<char, int> dict;
-	int dem = 0;
 	//Mảng theo thứ tự từ điển.
 	char F[n];
 	strcpy(F, bwt);
 	sort(F, F + n);
+
+	//map lưu trữ vị trí đầu tiên của các ký tự theo thứ tự trong F.
+	map<char, int> dict;
+	int dem = 0;
 	//Số lần xuất hiện ký tự bwt[i] trước bwt[i].
 	int C[n];
 	dict[bwt[0]] = 0;
@@ -109,16 +119,55 @@ char* inverseBWT(char* bwt, int n, int k){
 	return Q;
 }
 
+unsigned short int* MTF(char* bwt, int n, string characters, int m){
+	int* mtf = int[];
+	for(int i = 0; i < n; i++){
+		int pos = characters.find(bwt[i]);
+		mtf[i] = pos;
+		characters = characters[pos] + characters.substr(0, pos) + characters.substr(pos+1, m);
+	}
+	return mtf;
+}
+
+char* huffman(int* mtf, int* frequency){
+}
+
 int main(){
-	char arr[] = "SIX.MIXED.PIXIES.SIFT.SIXTY.PIXIE.DUST.BOXES";
-	int n = strlen(arr);
-	int k;
-	int* suffix_arr_index = computeSuffixArrayIndex(arr, n, k);
-	cout << "K :" << k << endl;
-	char* bwt = getLastColumn(arr, suffix_arr_index, n);
-	cout << "BWT :" << bwt << endl; 
-	char* original = inverseBWT(bwt, n, k);
-	cout << "original :" << original<< endl;
-	delete []original;
+	string filename;
+	string characters; //Các chữ cái được sử dụng trong text
+
+	cout << "Enter your filename : ";
+	cin >> filename;
+
+	fstream myfile(filename);
+
+	if(myfile.is_open()){
+		myfile.seekg(0, ios::end);
+		int n = myfile.tellg();
+		myfile.seekg(0, ios::beg);
+		char text[n];
+		int index = 0;
+		char ch;
+
+		while(myfile.get(ch)){
+			text[index] = ch;
+			if(count(characters.begin(), characters.end(), ch) == 0) characters += ch;
+			index ++;
+		}
+		sort(characters.begin(), characters.end()); //Sắp xếp các ký tự trong biến "characters" theo alphabet.
+
+		n = strlen(text);
+		int k;
+		int* suffix_arr_index = computeSuffixArrayIndex(text, n, k);
+		char* bwt = getLastColumn(text, suffix_arr_index, n);
+		cout << "BWT :" << bwt << endl;
+
+		char* original = inverseBWT(bwt, n, k);
+		cout << "original :" << original<< endl;
+		delete []original;
+
+		int* mtf = MTF(bwt, n, characters, characters.length());
+
+		} else cout << "Fail to read " + filename << endl;
 	return 0;
 }
