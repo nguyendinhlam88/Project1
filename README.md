@@ -29,7 +29,7 @@ git clone + https://github.com/nguyendinhlam88/Project1.git
 ## Program Logic : 
 1. Using text file to compress(C++ not supported for pdf/docx. For further, you can dowload more library to read file pdf/docx).
 2. I use pipeline for build this project : 
-> BWT \> Move To Front \> Huffman ***
+> BWT \> Move To Front \> Huffman
 3. unicode : Unicode 13.0(Only use public unicode character for build unicode in MTF).
 ## References
 - [1] Burrows, Michael; Wheeler, David J. (1994), [A block sorting lossless data compression algorithm](https://www.hpl.hp.com/techreports/Compaq-DEC/SRC-RR-124.html), Technical Report 124, Digital Equipment Corporation
