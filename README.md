@@ -21,7 +21,7 @@ git clone + https://github.com/nguyendinhlam88/Project1.git
 ## Language : C++11 
 1. C++11 is easy to work with unicode file
 2. Now i used g++ on terminal(Mac os) to compile this project.
-- ![Figure](./instructor.png)
+- ![Figure](https://github.com/nguyendinhlam88/Project1/blob/main/instructor.png)
 3. You can also use IDE as codeblock ...
 - [CodeBlock](http://www.codeblocks.org/downloads/26)
 - [Dowload](https://www.fosshub.com/Code-Blocks.html?dwl=codeblocks-17.12mingw-setup.exe)
