@@ -4,48 +4,57 @@
 
 using namespace std;
 
-struct rotation {
+struct Rotation {
 	int index;
-	char* suffix;
+	wchar_t* suffix;
 };
 
-bool cmp(rotation rot1, rotation rot2) {
-	return strcmp(rot1.suffix, rot2.suffix) < 0;
+bool cmp(Rotation rot1, Rotation rot2) {
+	return wcscmp(rot1.suffix, rot2.suffix) < 0;
 }
 
-int* build_suffix_array(char* arr, int n, int &k) {
-	int* suffix_array = new int[n];
-	rotation rot[n];
+// sArray : mảng hậu tố lưu giữ vị trí của các Rotation sau khi sắp xếp.
+int* buildSuffixArray(wchar_t* arr, int n, int &k) {
+	int* sArray = new int[n];
+	Rotation rot[n];
 
 	for(int i = 0; i < n; i++) {
 		rot[i].index = i;
 		rot[i].suffix = arr + i;
 	} 
-	// Sort rot array by item's suffix. Le
+	// Sắp xếp mảng rot theo suffix tăng dần.
 	sort(rot, rot + n, cmp);
 
 	for(int i = 0; i < n; i++) {
-		suffix_array[i] = rot[i].index;
-		if(suffix_array[i] == 0) k = i;
+		sArray[i] = rot[i].index;
+		if(sArray[i] == 0) k = i;
 	}
 
-	return  suffix_array;
+	return  sArray;
 }
 
-char* get_last_column(char* arr, int* suffix_array, int n) {
-	char* bwt = new char[n];
+wchar_t* getLastColumn(wchar_t* arr, int* sArray, int n) {
+	wchar_t* bWTEncoder = new wchar_t[n];
 
 	for(int i = 0; i < n; i++) {
-		bwt[i] = arr[(suffix_array[i] - 1 + n)%n];
+		bWTEncoder[i] = arr[(sArray[i] - 1 + n)%n]; // Lấy ra vị trí cuối của Rotation tương ứng.
 	}
-	bwt[n] = '\0';
-	return bwt;
+	bWTEncoder[n] = '\0';
+
+	return bWTEncoder;
 }
 
-char* bwte(char* arr, int n, int &k) {
-	int* suffix_array = build_suffix_array(arr, n, k);
-	char* bwte = get_last_column(arr, suffix_array, n);
-	delete []suffix_array;
-	return bwte;
+// arr : mảng ký tự ban đầu trước khi mã hoá.
+// bwte : mảng sau khi mã hoá theo burror wheeler transform.
+// k : vị trí của chuỗi ban đầu sau khi buildSuffixArray(), thuận tiện cho việc decode.
+wchar_t* bWTEncoder(wchar_t* arr, int n, int &k) {
+	int* sArray;
+	wchar_t* bWTEncoder;
+
+	sArray = buildSuffixArray(arr, n, k);
+	bWTEncoder = getLastColumn(arr, sArray, n);
+	delete []sArray;
+
+	return bWTEncoder;
 }
 

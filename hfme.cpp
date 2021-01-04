@@ -1,6 +1,6 @@
 #include <iostream>
 #include <algorithm>
-#include <string.h>
+#include <string>
 #include <map>
 #include <cmath>
 #include "hfm.h"
@@ -8,152 +8,241 @@
 using namespace std;
 
 struct Node {
-	char ch;
-	bool is_leave;
-	float weight;
+	wchar_t ch;
+	bool isLeave;
+	int weight;
 	Node* left;
 	Node* right;
 };
 
-bool cmpN(Node node1, Node node2) {
-	return node1.weight <= node2.weight;
+// ouput : tần suất xuất hiện của các chữ cái.
+void getFrequency(wchar_t* arr, map<wchar_t, int> &frequency, int n) {
+	for(int i = 0; i < n; i++) {
+		frequency[arr[i]] += 1;
+	} 
 }
 
-// output : bảng chữ cái của arr(không phải ascii), origin(arr).
-string build_alphabet(string arr, string &origin, int n) {
-	string alphabet;
+void merge(Node* nArray, int beg, int mid, int end) {
+	int n1, n2, idx = 0, l = 0, r = 0, k = beg;
 
-	for(int i = 0; i < n; i++) {
-		origin += arr[i];
-		int fre = count(alphabet.begin(), alphabet.end(), arr[i]);
-		if(fre == 0) {
-			alphabet += arr[i];
+	n1 = mid - beg + 1;
+	n2 = end - mid;
+	Node lArray[n1], rArray[n2];
+
+	for(int i = beg; i <= mid; i++) {
+		lArray[idx].ch = nArray[i].ch;
+		lArray[idx].isLeave = nArray[i].isLeave;
+		lArray[idx].weight = nArray[i].weight;
+		lArray[idx].left = nArray[i].left;
+		lArray[idx].right = nArray[i].right;
+		idx++;
+	}
+
+	idx = 0;
+	for(int i = mid+1; i <= end; i++) {
+		rArray[idx].ch = nArray[i].ch;
+		rArray[idx].isLeave = nArray[i].isLeave;
+		rArray[idx].weight = nArray[i].weight;
+		rArray[idx].left = nArray[i].left;
+		rArray[idx].right = nArray[i].right;
+		idx++;
+	}
+
+	while(l < n1 && r < n2) {
+		if(lArray[l].weight < rArray[r].weight) {
+			nArray[k].ch = lArray[l].ch;
+			nArray[k].isLeave = lArray[l].isLeave;
+			nArray[k].weight = lArray[l].weight;
+			nArray[k].left = lArray[l].left;
+			nArray[k].right = lArray[l].right;
+			l++;
+			k++;
+		} else if(lArray[l].weight > rArray[r].weight) {
+			nArray[k].ch = rArray[r].ch;
+			nArray[k].isLeave = rArray[r].isLeave;
+			nArray[k].weight = rArray[r].weight;
+			nArray[k].left = rArray[r].left;
+			nArray[k].right = rArray[r].right;
+			r++;
+			k++;
+		} else {
+			nArray[k].ch = lArray[l].ch;
+			nArray[k].isLeave = lArray[l].isLeave;
+			nArray[k].weight = lArray[l].weight;
+			nArray[k].left = lArray[l].left;
+			nArray[k].right = lArray[l].right;
+			l++;
+			k++;
+			nArray[k].ch = rArray[r].ch;
+			nArray[k].isLeave = rArray[r].isLeave;
+			nArray[k].weight = rArray[r].weight;
+			nArray[k].left = rArray[r].left;
+			nArray[k].right = rArray[r].right;
+			r++;
+			k++;
 		}
 	}
 
-	return alphabet;
-}
-
-// ouput : tần suất xuất hiện của các chữ cái.
-float* get_frequency(string origin, string alphabet, int n) {
-	int size = alphabet.length();
-	float* frequency = new float[size];
-
-	for(int i = 0; i < size; i++) {
-		int dem  = count(origin.begin(), origin.end(), origin[i]);
-		frequency[i] = (1.0*dem)/n;
-	} 
-
-	return frequency;
-}
-
-// Xây dựng các nút lá và xắp sếp theo thứ tự tăng dần.
-Node* build_node_array(string alphabet, float* frequency) {
-	int size = alphabet.length();
-	Node* node_array = new Node[size];
-
-	for(int i = 0; i < size; i++) {
-		node_array[i].ch = alphabet[i];
-		node_array[i].weight = frequency[i];
-		node_array[i].is_leave = true;
+	while(l < n1) {
+		nArray[k].ch = lArray[l].ch;
+		nArray[k].isLeave = lArray[l].isLeave;
+		nArray[k].weight = lArray[l].weight;
+		nArray[k].left = lArray[l].left;
+		nArray[k].right = lArray[l].right;
+		l++;
+		k++;
 	}
 
-	sort(node_array, node_array + size, cmpN);
-	return node_array;
+	while(r < n2) {
+		nArray[k].ch = rArray[r].ch;
+		nArray[k].isLeave = rArray[r].isLeave;
+		nArray[k].weight = rArray[r].weight;
+		nArray[k].left = rArray[r].left;
+		nArray[k].right = rArray[r].right;
+		r++;
+		k++;
+	}
+}
+
+void mergeSort(Node* nArray, int beg, int end) {
+	int mid;
+
+	if(beg == end) return;
+	else if(beg < end){
+		mid = (beg + end)/2;
+		mergeSort(nArray, beg, mid);
+		mergeSort(nArray, mid+1, end);
+		merge(nArray, beg, mid, end);
+	}
+}
+
+// nArray : một mảng các nút của các ký tự và tuần suất của nó.
+Node* buildNodeArray(map<wchar_t, int> frequency) {
+	int size, idx = 0;
+	Node* nArray;
+
+	size = frequency.size();
+	nArray = new Node[size];
+	for(auto item : frequency) {
+			nArray[idx].ch = item.first;
+			nArray[idx].weight = item.second;
+			nArray[idx].isLeave = true;
+			idx++;
+	}
+	mergeSort(nArray, 0, size - 1);
+
+	return nArray;
 }
 
 // Sau khi thực hiện xong thì root node ở node_array[size-1].
-void build_huffman_tree(Node* node_array, int size) {
+void buildHuffmanTree(Node* nArray, int n) {
+	Node* newNode;
+	Node temp;
 
-	for(int i = 1; i < size; i++) { // Tạo ra n - 1 nút để về 1 nút gốc. 
-		Node* new_node = new Node;
-		new_node -> ch = ' ';
-		new_node -> weight = node_array[i-1].weight + node_array[i].weight;
-		new_node -> is_leave = false;
-		Node temp = node_array[i];
-		node_array[i] = *(new_node);
-		*(new_node) = temp;
-		node_array[i].left = node_array + i - 1;
-		node_array[i].right = new_node;
-		if( i == size - 1) {
+	for(int i = 1; i < n; i++) { 
+		newNode = new Node;
+		newNode -> ch = L' ';
+		newNode -> weight = nArray[i-1].weight + nArray[i].weight;
+		newNode -> isLeave = false;
+		temp = nArray[i];
+		nArray[i] = *(newNode);
+		*(newNode) = temp;
+		nArray[i].left = nArray + i - 1;
+		nArray[i].right = newNode;
+		if(i == (n - 1)) {
 			break;
 		}
-		sort(node_array + i, node_array + size, cmpN);
+		mergeSort(nArray, i, n - 1);
 	}
 }
 
-void get_huffman(Node root, map<char, string> &dict, string &xau, string &header) {
+void getHuffmanEncoder(Node root, map<wchar_t, wstring> &dict, wstring &xau, wstring &header) {
 
-	if(root.is_leave == true) {
+	if(root.isLeave == true) {
 		dict[root.ch] = xau;
-		header += '1';
+		header += L'1';
 		header += root.ch;
 		xau = xau.substr(0, xau.length()-1);
-
 		return;
 	} 
 	if(root.right != NULL) {
 
-		header += '0';
-		string xau1 = xau + '0';
-		get_huffman(*root.left, dict, xau1, header);
+		header += L'0';
+		wstring xau1 = xau + L'0';
+		getHuffmanEncoder(*root.left, dict, xau1, header);
 
-		string xau2 = xau + '1';
-		get_huffman(*root.right, dict, xau2, header);
+		wstring xau2 = xau + L'1';
+		getHuffmanEncoder(*root.right, dict, xau2, header);
 		xau = xau.substr(0, xau.length()-1);
 
 		return;
 	}
 }
 
-// Chuyển các dãy 8 bit nhị phân tới char.
-string convert_to_char(string huffman) {
-	string temp = "";
-	string bit_0 = "000000";
-	int size = huffman.length();
-	int index = 0;
+// Chuyển các dãy 32 bit nhị phân tới wchar_t.
+wstring toChar(wstring huffman, wstring &nChar32, wchar_t &nAddBit) {
+	wstring toChar = L"", bit0 = L"0000000000000000000000000000000";
+	unsigned int size, index, sum;
+	bool chkFirst;
 
-	if(size % 7 != 0) huffman += bit_0.substr(0, (7 - (size % 7)));
-	int char_num = huffman.length()/7;
-
+	nChar32 = L"";
+	chkFirst = false;
+	size = huffman.length();
+	index = 0;
 	
-	while (index < char_num) {
-		int sum = 0;
-		for(int i = 0; i < 7; i++){
-			if(huffman[index*7 + i] == '1') {
-				sum += pow(2, 6 - i);
+	while (index < size) {
+		sum = 0;
+		if(chkFirst == true && (size - index) > 1 && (size - index) < 15) {
+			nAddBit = 15 - (size - index);
+			huffman += bit0.substr(nAddBit);
+		}
+		if( chkFirst == false && (size - index) > 1 && (size - index) < 32) {
+			nAddBit = 32 - (size - index);
+			huffman += bit0.substr(nAddBit);
+		}
+		if(chkFirst == false) {
+			for(int i = 0; i < 32; i++){
+				if(huffman[(index/32)*32 + i] == L'1') sum += pow(2, 31 - i);
+			}
+		} else {
+			for(int i = 0; i < 15; i++){
+				if(huffman[(index/15)*15 + i] == L'1') sum += pow(2, 14 - i);
 			}
 		}
-		temp += char(sum);
-		index ++;
+		if(chkFirst == false && ((sum > 55203 && sum < 63744) || (sum > 262144 && sum < 917504) || sum > 983039)) {
+			chkFirst = true;
+			nChar32 += wchar_t(index/32 + 48);
+			continue;
+		}
+		if(!chkFirst) index += 32;
+		else index += 15;
+		if(sum == 8) sum = wchar_t(983039);
+		toChar += wchar_t(sum);
 	}
 
-	return temp;
+	return toChar;
 }
 
-string hfme(string arr, int n) {
-	string origin; // Chuyển arr -> string cho dễ sử dụng.
-	map<char, string> dict;
-	string xau; // xâu : ánh xạ từ ký tự sang xâu 01.
-	string huffman;
-	string header;
+wstring hfmEncoder(wchar_t* arr, int n) {
+	map<wchar_t, wstring> dict;
+	wstring xau, hfmEncoder = L"", header, nChar32, toChar1; // xâu : ánh xạ từ ký tự sang xâu 01.
+	map<wchar_t, int> frequency;
+	Node* nArray;
+	Node root;
+	wchar_t nAddBit;
 
-	string alphabet = build_alphabet(arr, origin, n);
-	float* frequency = get_frequency(origin, alphabet, n);
-	Node* node_array = build_node_array(alphabet, frequency);
+	getFrequency(arr, frequency, n);
+	nArray = buildNodeArray(frequency);
+	buildHuffmanTree(nArray, frequency.size());
+	root = nArray[frequency.size() - 1];
+	getHuffmanEncoder(root, dict, xau, header);
 
-	delete []frequency;
-	build_huffman_tree(node_array, alphabet.length());
-	Node root = node_array[alphabet.length()-1];
-	get_huffman(root, dict, xau, header);
-
-	delete []node_array; // Chưa giải phóng hết.
+	delete []nArray;
 	for(int i = 0; i < n; i++) {
-		huffman += dict[arr[i]];
+		hfmEncoder += dict[arr[i]];
 	}
-	string bit_num = "7"; // Số bit biểu diễn.
-	char bit_add = 48 + (7 - huffman.length() % 7); // Số bit 0 thêm vào.
-	huffman = char(header.length()) + bit_num + bit_add + header + convert_to_char(huffman);
+	toChar1 = toChar(hfmEncoder, nChar32, nAddBit);
+	hfmEncoder = wchar_t(header.length()) + nChar32 + nAddBit + header + toChar1;
 
-	return huffman;
+	return hfmEncoder;
 }

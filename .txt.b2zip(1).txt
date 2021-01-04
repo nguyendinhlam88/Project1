@@ -1,0 +1,279 @@
+Contents
+Danh mục hình ảnh	2
+Bài thực hành số 5: Thực hành gỡ rối, kiểm thử và tinh chỉnh mã nguồn3
+1.1 Hướng dẫn tìm một số lỗi cú pháp (Syntax Error) thường gặp3
+1.2 Thực hành sửa lỗi cú pháp3
+Bài tập 1:  Hoán vị của n số nguyên từ 1 đến n.3
+Bài tập 2: Bài toán cái túi 5
+1.3 Hướng dẫn tìm một số lỗi thực thi (Runtime Error)6
+Bài tập 3: Dãy ngoặc đúng	6
+Phần 2. Kiểm thử	8
+2.1 Hướng dẫn8
+2.2 Thực hành8
+Bài tập 4: Bài toán người du lịch	8
+Phần 3. Tinh chỉnh mã nguồn8
+Bài tập 5: Năm nhuận8
+Bài tập 6: Tổng kết9
+Bài tập 7: Chia tiền9
+Phần 4. Bài tập về nhà10
+Bài tập 8: Cắt hình chữ nhật10
+Bài tập 9: Xây tháp10
+Danh mục hình ảnh
+
+Hình 1   :  Hoán vị của n số nguyên từ 1 đến n3
+Hình 2 :  Bài toán cái túi 5
+Hình 3 : Dãy ngoặc đúng7
+Hình 4  : Bài toán người du lịch	10
+Hình 5  : Năm nhuận	11
+Hình 6 : Tổng kết	13
+Hình 7 : Chia tiền	15
+Hình 8 : Cắt hình chữ nhật17
+Hình 9 : Xây tháp20
+ 
+Bài thực hành số 5: Thực hành gỡ rối, kiểm thử và tinh chỉnh mã nguồn
+
+1.1 Hướng dẫn tìm một số lỗi cú pháp (Syntax Error) thường gặp
+1.2 Thực hành sửa lỗi cú pháp
+Bài tập 1:  Hoán vị của n số nguyên từ 1 đến n.
+Đoạn code sau liệt kê tất cả các hoán vị $n$ số. Hãy tìm và sửa các lỗi cú pháp như hướng dẫn ở trên.
+
+Tên file:  20183574_NguyenDinhLam_Bai5_1.cpp
+
+#include <stdio.h>
+
+int x[100], mark[100], n;
+
+void print(){
+    for (int i = 1; i <= n; ++i) printf("%d ", x[i]);
+    printf("\n");
+}
+
+void process(int i) {
+    if (i > n){
+        print();
+        return;
+    }
+    for (int j = 1; j <= n; ++j)
+        if (!mark[j]){
+            mark[j] = 1;
+            x[i] = j;
+            process(i+1);
+            mark[j] = 0;
+        }
+}
+
+int main() {
+    printf("HO VA TEN : %s", "Nguyen Dinh Lam\n");
+    printf("MSSV      : %s", "20183574\n");
+    
+    n = 5;
+    process(1);
+    return 0;
+}
+
+Kết quả:   
+
+ Hình 1
+Bài tập 2: Bài toán cái túi 
+Cho một cái túi có sức chứa $M$ và $n$ đồ vật. Đồ vật thứ $i$ có khối lượng $m_i$ và giá trị $v_i$. Cần chọn ra một số đồ vật để bỏ vào túi sao cho tổng khối lượng không quá $M$ và tổng giá trị là lớn nhất có thể. Đoạn code sau đây giải bài toán cái túi bằng phương pháp duyệt nhánh cận. Hãy tìm và sửa các lỗi cú pháp
+
+Tên file : 20183574_NguyenDinhLam_Bai5_2.cpp
+
+#include <iostream>
+using namespace std;
+
+int n, M, m[100], v[100];
+int x[100], best, sumV, sumM, all[100];
+
+void init(){
+    for (int i = n; i >= 1; --i){
+        all[i] = all[i+1] + v[i];
+    }
+}
+
+void print() {
+    cout << best;
+}
+
+void process(int i){
+    if (sumV + all[i] <= best || sumM > M) return;
+    if (i > n){
+        best = sumV;
+        return;
+    }
+    process(i+1);
+    sumM += m[i];
+    sumV += v[i];
+    process(i+1);
+    sumM -= m[i];
+    sumV -= v[i];
+}
+
+int main() {
+    cout << "HO VA TEN :  Nguyen Dinh Lam\n";
+    cout << "MSSV      : 20183574\n";
+    cin >> n >> M;
+    for (int i = 1; i <= n; ++i)
+        cin >> m[i] >> v[i];
+    init();
+    process(1);
+    print();
+    return 0;
+}
+	
+Kết quả : 
+Hình 2  
+
+1.3 Hướng dẫn tìm một số lỗi thực thi (Runtime Error)
+Bài tập 3: Dãy ngoặc đúng
+Mã nguồn dưới đây là của một sinh viên, khi submit bị lỗi runtime (Exit code is -1073741819). Sử dụng công cụ debug ở trên, hãy tìm và sửa các lỗi trong mã nguồn
+
+Tên file : 20183574_NguyenDinhLam_Bai5_3.cpp
+
+#include <iostream>
+#include <string.h>
+#include <stack>
+
+using namespace std;
+
+ 
+int par(string str){
+    int a = str.length();
+    stack<char> S;
+    char x, y;
+    for (int i=0; i<a; i++){
+        x = str[i];
+        if (x == '(' || x == '[' || x == '{'){
+            S.push(x);
+        }
+        else {
+            
+            if (x == ')') {
+                if(S.empty()) return 0;
+                if (S.top() == '('){
+                    S.pop();
+                }
+                else return 0;
+            }
+            else if (x == ']') {
+                if(S.empty()) return 0;
+                if (S.top() == '['){
+                    S.pop();
+                }
+                else return 0;
+            }
+            else if (x == '}') {
+                if(S.empty()) return 0;
+                if (S.top() == '{'){
+                    S.pop();
+                }
+                else return 0;
+            }
+        }
+    }
+}
+ 
+int main(){
+    int n;
+    string str;
+    
+    cout << "HO VA TEN : Nguyen Dinh Lam\n";
+    cout << "MSSV      : 20183574\n";
+    
+    cin >> n;
+    for(int i=0; i<n; i++){
+        cin >> str;
+        cout << par(str) << endl;
+    }
+    
+    return 0;
+}
+
+Kết quả : 
+
+Hình 3 ==  
+Phần 2. Kiểm thử
+Test đề bài thường là test đơn giản, không thể kiểm tra hết các ngõ ngách logic trong chương trình. Do đó chúng ta cần sinh thêm các test khác. Các loại test nên sinh bao gồm: test ngẫu nhiên, test đặc biệt (để kiểm tra các trường hợp đặc biệt), test lớn (để kiểm tra giới hạn và thời gian chạy)
+Trong khi test đặc biệt có thể sinh bằng tay, thường nhỏ và phụ thuộc vào kinh nghiệm của lập trình viên, thì test ngẫu nhiên cần phải sinh nhiều và lớn tương đối. Do đó cần thiết phải viết chương trình sinh test và kiểm thử
+
+2.1 Hướng dẫn
+2.2 Thực hành
+Bài tập 4: Bài toán người du lịch
+Cho hai vector, hãy xóa hết các phần tử chẵn, sắp xếp giảm dần các số trong cả 2 vector và trộn lại thành một vector cũng được sắp xếp giảm dần.
+
+Tên file : Tên file : 20183574_NguyenDinhLam_Bai5_4.cpp
+
+Kết quả : 
+Hình 4
+Phần 3. Tinh chỉnh mã nguồn
+Bài tập 5: Năm nhuận
+Một năm được coi là nhuận nếu hoặc nó chia hết cho 4 nhưng không chia hết cho 100, hoặc nó chia hết cho 400. Cho một danh sách các năm, kiểm tra xem có tồn tại năm nhuận trong danh sách đó hay không.
+Mã nguồn sau giải quyết bài toán đó, hãy tinh chỉnh nó để tăng hiệu suất chương trình.
+
+Tên file : 20183574_NguyenDinhLam_Bai5_5.cpp
+#include <bits/stdc++.h>
+using namespace std;
+
+int main(){
+    int n;
+    
+    cout << "HO VA TEN : Nguyen Dinh Lam\n";
+    cout << "MSSV      : 20183574\n";
+    cin >> n;
+    while(n--){
+        int a;
+        cin >> a;
+        if ((a % 4 == 0 && a % 100 != 0) || (a % 400 == 0)) {
+            cout << "Yes";
+            break;
+        }
+    }
+    if(n == 0) cout << "No";
+}	
+
+Kết quả : 
+	 
+Hình 5  
+
+Bài tập 6: Tổng kết
+
+Một lớp có 𝑘𝑛n thôn, thôn thứ 𝑖i có 𝑘𝑖ki nhà. Mỗi thôn họ sẽ quyết định xin tiền hay cho tiền, phụ thuộc vào đánh giá của họ về mức độ giàu nghèo ở đây. Nếu thôn 𝑖i giàu, họ sẽ đi từng nhà trong số 𝑘𝑖ki nhà này và xin 𝑎𝑖,𝑗ai,j tiền của nhà thứ 𝑗j. Nếu thôn 𝑖i nghèo, họ sẽ đi từng nhà trong số 𝑘𝑖ki nhà này và phát 𝑎𝑖,𝑗ai,j tiền cho nhà thứ 𝑗j. Hãy tính số tiền ít nhất họ phải mang theo để đảm bảo có thể phát đủ cho người nghèo (tức số tiền luôn không bị âm)
+Mã nguồn sau giải quyết bài toán đó, hãy tinh chỉnh nó để tăng
+hiệu suất chương trình.
+Hình 9Contents
+Danh mục hình ảnh	2
+Bài thực hành số 5: Thực hành gỡ rối, kiểm thử và tinh chỉnh mã nguồn3
+1.1 Hướng dẫn tìm một số lỗi cú pháp (Syntax Error) thường gặp3
+1.2 Thực hành sửa lỗi cú pháp3
+Bài tập 1:  Hoán vị của n số nguyên từ 1 đến n.3
+Bài tập 2: Bài toán cái túi 5
+1.3 Hướng dẫn tìm một số lỗi thực thi (Runtime Error)6
+Bài tập 3: Dãy ngoặc đúng	6
+Phần 2. Kiểm thử	8
+2.1 Hướng dẫn8
+2.2 Thực hành8
+Bài tập 4: Bài toán người du lịch	8
+Phần 3. Tinh chỉnh mã nguồn8
+Bài tập 5: Năm nhuận8
+Bài tập 6: Tổng kết9
+Bài tập 7: Chia tiền9
+Phần 4. Bài tập về nhà10
+Bài tập 8: Cắt hình chữ nhật10
+Bài tập 9: Xây tháp10
+Danh mục hình ảnh
+
+Hình 1   :  Hoán vị của n số nguyên từ 1 đến n3
+Hình 2 :  Bài toán cái túi 5
+Hình 3 : Dãy ngoặc đúng7
+Hình 4  : Bài toán người du lịch	10
+Hình 5  : Năm nhuận	11
+Hình 6 : Tổng kết	13
+Hình 7 : Chia tiền	15
+Hình 8 : Cắt hình chữ nhật17
+Hình 9 : Xây tháp20
+ 
+Bài thực hành số 5: Thực hành gỡ rối, kiểm thử và tinh chỉnh mã nguồn
+
+1.1 Hướng dẫn tìm một số lỗi cú pháp (Syntax Error) thường gặp
+1.2 Thực hành sửa lỗi cú pháp
+Bài tập 1:  Hoán vị của n 

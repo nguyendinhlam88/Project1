@@ -4,15 +4,17 @@
 
 using namespace std;
 
-// arr : mtfencoder, n : chiều dài mảng.
-char* mtfd(string arr, int n, string ascii) {
-	char* mtfd = new char[n]; // Vì vị trí của các ký tự xuất hiện trong mảng < 128 nên chuyển vị trí sang char cho tiết kiệm bộ nhớ.
+// arr : chuỗi mTFEncoder.
+wchar_t* mTFDecoder(wstring arr, wchar_t* unicode, int n) {
+	wchar_t* mTFDecoder;
 
+	mTFDecoder = new wchar_t[n];
 	for(int i = 0; i < n; i++) {
-		mtfd[i] = ascii[arr[i]];
-		ascii = ascii[arr[i]] + ascii.substr(0, arr[i]) + ascii.substr(arr[i] + 1);
+		if(arr[i] == 983039) arr[i] = 8;
+		mTFDecoder[i] = unicode[arr[i]];
+		changeUnicode(unicode, arr[i]);
 	}
+	mTFDecoder[n] = '\0';
 
-	mtfd[n] = '\0';
-	return mtfd;
+	return mTFDecoder;
 }

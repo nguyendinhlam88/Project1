@@ -1,4 +1,4 @@
 using namespace std;
 
-string hfme(string arr, int n);
-string hfmd(string arr, int n);
+wstring hfmEncoder(wchar_t* arr, int n);
+wstring hfmDecoder(wstring arr);

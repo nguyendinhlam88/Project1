@@ -1,41 +1,69 @@
 #include <iostream>
-#include <string>
 #include "bwt.h"
 #include "mtf.h"
 #include "hfm.h"
+#include "encode.h"
+#include "decode.h"
+#include "io.h"
+#include <codecvt>
 
 using namespace std;
 
-string get_ascii() {
-	string ascii;
+void menu() {
+	wcout <<" ----------- " << endl;
+	wcout <<"|1. Encode  |" << endl; 
+	wcout <<"|2. Decode  |" << endl;
+	wcout <<" ----------- " << endl;
+}
 
-	for(int i = 0; i < 128; i++) {
-		ascii += char(i);
+wstring toString(wchar_t* arr, int sText) {
+	int sArr;  
+	wstring temp;
+
+	temp = L"";
+	for(int i = 0; i < sText; i++) {
+		temp += arr[i];
 	}
 
-	return ascii;
+	return temp;
 }
 
 int main(int argc, char *argv[]) {
-	char text[] = "SIX.MIXED.PIXIES.SIFT.SIXTY.PIXIE.DUST.BOXES$";
-	string ascii = get_ascii();
-	int k;
-	int n = strlen(text);
+	wchar_t* fileContent;
+	int select, sText, pos1 = 0, pos2 = 0;
+	wstring encode, decode;
+	string filename, ioName;
 
-	cout << "original: " << text << endl;
-	char* bwte1 = bwte(text, n, k);
-	cout << "bwte1 :" << bwte1 << endl;
-	string mtfe1 = mtfe(bwte1, n, ascii);
-	cout << "mtfe1 :" << mtfe1 << endl;
-	string hfme1 = hfme(mtfe1, mtfe1.length());
-	cout << "hfme1 :" << hfme1 << endl;
+	locale::global(locale(locale(""), new codecvt_utf8<wchar_t>));
 
-	string hfmd1 = hfmd(hfme1, hfme1.length());
-	cout << "hfmd1 :" << hfmd1 << endl;
-	char* mtfd1 = mtfd(hfmd1, hfmd1.length(), ascii);
-	cout << "mtfd1 : " << mtfd1 << endl;
-	char* bwtd1 = bwtd(mtfd1, strlen(mtfd1), k);
-	cout << "bwtd1" << ":" << bwtd1 << endl;
+    wcin.imbue(locale());
+    wcout.imbue(locale());
+
+	menu();
+	cout << "Nhấn 1 hoặc 2 để chọn : ";
+	wcin >> select;
+
+	switch(select) {
+		case 1: 
+			wcout << "Enter filename to encode :" << endl;
+			cin >> filename;
+			fileContent = readFile(filename, sText, false);
+			encode = encodeText(fileContent, sText);
+			writeFile(filename + ".b2zip", encode, false); 
+			break;
+		case 2:
+			wcout << "Enter filename to decode :" << endl;
+			cin >> filename;
+			fileContent = readFile(filename, sText, true);
+			pos1 = filename.find(".");
+			pos2 = filename.find(".", pos1+1);
+			ioName = filename.substr(0, pos1) + "(1)" + filename.substr(pos1, pos2-pos1); 
+			decode  = decodeText(toString(fileContent, sText));
+			writeFile(ioName, decode, true);
+			break;
+		default :
+			cout << "Vui lòng nhập 1 - 2" << endl;
+	}
 
 	return 0;
 }

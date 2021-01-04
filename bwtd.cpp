@@ -4,44 +4,63 @@
 
 using namespace std;
 
-/* Hàm trả về 1 mảng có tính chất : row[i] = vị 
-trí suffix tiếp theo khi xoay 1 ký tự sang trái trong ma trận xoay đã sắp xếp: 'abc' -> 'bca' */
-int* compute_next(char* arr, int n) {
-	char sorted_arr[n];
-	strcpy(sorted_arr, arr);
-	sort(sorted_arr, sorted_arr + n);
-	int* next = new int[n];
-	map<char, int> count; // Số ký tự (a) đã xuất hiện trước ký tự đang xét (a).
+int findCharLoc(wchar_t* arr, wchar_t ch, int n, int start) {
+	for(int i = start; i < n; i++) {
+		if(arr[i] == ch) return i;
+	}
+
+	return -1;
+}
+
+/* next[i] với i là vị trí của ví dụ 'abc', 
+next[i] : 'bca' : chuỗi chuyển sang trái 1 ký tự */
+int* computeNext(wchar_t* arr, int n) {
+	wchar_t sortArray[n], firstChar;
+	int* next; // Vị trí sau khi quay 1 
+	map<wchar_t, int> begLoc; // Lưu lại vị trí đầu của các ký tự.
+	int loc;
 
 	for(int i = 0; i < n; i++) {
-		int k = count[sorted_arr[i]];
-		char* loc = strchr(arr, sorted_arr[i]);
-
-		if(k == 0) {
-			next[i] = loc - arr;
-		} else {
-			for(int j = 1; j <= k; j++){ 
-				loc = strchr(loc + 1, sorted_arr[i]);
-			}
-			next[i] = loc - arr;
-		}
-
-		count[sorted_arr[i]] += 1;
+		sortArray[i] = arr[i];
 	}
+	sort(sortArray, sortArray + n);
+	next = new int[n];
+
+	for(int i = 0; i < n; i++) {
+		if(sortArray[i] == firstChar) loc = findCharLoc(arr, sortArray[i], n, begLoc[sortArray[i]] + 1);
+		else if(begLoc[sortArray[i]] == 0) {
+			loc = findCharLoc(arr, sortArray[i], n, 0);
+			if(loc == 0) firstChar = sortArray[i];
+		} else loc = findCharLoc(arr, sortArray[i], n, begLoc[sortArray[i]] + 1);
+		begLoc[sortArray[i]] = loc;
+		next[i] = loc;
+		}
 
 	return next;
 }
 
-char* bwtd(char* arr, int n, int k) {
-	char* bwtd = new char[n];
-	int* next = compute_next(arr, n);
+// Do pos : vị trí mảng ban đầu, xoay 1 ký tự thì ra ký tự đầu tiên, cứ xây dựng tiếp tục đến ký tự cuối.
+wchar_t* getBWTDecoder(wchar_t* arr, int n, int* next, int pos) {
+	wchar_t* bWTDecoder;
 
+	bWTDecoder = new wchar_t[n];
 	for(int i = 0; i < n; i++) {
-		k = next[k];
-		bwtd[i] = arr[k];
+		pos = next[pos];
+		bWTDecoder[i] = arr[pos];
 	}
-	bwtd[n] = '\0';
+	bWTDecoder[n] = '\0';
+
+	return bWTDecoder;
+}
+
+// pos : vị trí mảng ban đầu(=k).
+wchar_t* bWTDecoder(wchar_t* arr, int n, int pos) {
+	int* next;
+	wchar_t* bWTDecoder;
+
+	next = computeNext(arr, n);
+	bWTDecoder = getBWTDecoder(arr, n, next, pos);
 	delete []next;
 
-	return bwtd;
+	return bWTDecoder;
 }

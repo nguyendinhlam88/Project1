@@ -1,5 +1,4 @@
 #include <iostream>
-#include <iostream>
 #include <cmath>
 #include <map>
 #include <stack>
@@ -9,88 +8,96 @@
 using namespace std;
 
 // Chuyển đầu vào sang mã nhị phân.
-string convert_to_bin(string hfmc, int bit_num, int bit_add) {
-	int size = hfmc.length();
-	string hfmcode;
-	int index = 0;
+wstring toBin(wstring hfmChar, int nChar32, int nAddBit) {
+	int size, index, value, temp;
+	wstring hfmCode;
 
+	size = hfmChar.length();
+	index = 0;
 	for(int i = 0; i < size; i++) {
-		int value = hfmc[i];
+		value = hfmChar[i];
+		if(value == 983039) value = 8;
 
-		for(int j = 0; j != bit_num; j++) {
-			if (index == (size*bit_num - bit_add)) {
-				return hfmcode;
-			}
-			int temp = pow(2, 6-j);
+		for(int j = 0; j != 32; j++) {
+			if(nChar32 == 0 && j == 15) break;
+			if(index == (32 * nChar32 + (size - nChar32)*15 - nAddBit)) return hfmCode;
+			if(nChar32 > 0) {
+				temp = pow(2, 31-j); 
+				nChar32 -= 1;
+			} else temp = pow(2, 14-j);
 			if(value >= temp) {
-				hfmcode += '1';
-				index++;
+				hfmCode += L'1';
 				value -= temp;
-			} else {
-				hfmcode += '0';
-				index++;
-			}
+			} else hfmCode += L'0';
+			index++;
 		}
 	}
-	return hfmcode;
+
+	return hfmCode;
 }
 
-void build_dict(string header, map<string, char> &dict) {
-	stack<string> st;
-	int size = header.length();
-	string temp = "";
-	int dem = 0;
+void buildDict(wstring header, map<wstring, wchar_t> &dict) {
+	stack<wstring> st;
+	int size, dem;
+	wstring temp;
 
+	size = header.length();
+	temp = L"";
+	dem = 0;
 	for(int i = 0; i < size; i++) { // Bắt đầu từ 1 để xét đến stack rỗng chuyển sang nhánh phải của rỗng.
 		if(st.empty() && dem < 3) {
 			dem++;
 			if(dem == 2) {
-				temp = "1";
-				st.push("1");
+				temp = L"1";
+				st.push(L"1");
 			}
 		}
-		if(header[i] == '0') {
-			temp += '0';
+		if(header[i] == L'0') {
+			temp += L'0';
 			st.push(temp);
 		} else {
 			dict[temp] = header[i+1];
 			i++;
 			st.pop();
 			if(st.empty()) continue;
-			temp = st.top() + '1';
+			temp = st.top() + L'1';
 			st.pop();
 			st.push(temp);
 		}
 	}
 }
 
-string decode_huffman(string hfmcode, map<string, char> dict) {
-	int size = hfmcode.length();
-	string decode;
-	string temp;
+wstring decodeHuffman(wstring hfmCode, map<wstring, wchar_t> dict) {
+	int size;
+	wstring hfmDecode, temp;
 
+	size = hfmCode.length();
 	for(int i = 0; i < size; i++)  {
-		temp += hfmcode[i];
+		temp += hfmCode[i];
 		if(dict.count(temp) != 0) {
-			decode += dict[temp];
-			temp = "";
+			hfmDecode += dict[temp];
+			temp = L"";
 		}
 	}
-	return decode;
+
+	return hfmDecode;
 }
 
-string hfmd(string huffman, int n) {
-	int header_size = huffman[0];
-	int bit_num = huffman[1] - 48;	// Ascii : 7 bit
-	int bit_add = huffman[2] - 48; // Số lượng bit thêm vào cuối.
-	map<string, char> dict;	
+wstring hfmDecoder(wstring huffman) {
+	int sHeader, nAddBit, nChar32;
+	wchar_t pos;
+	map<wstring, wchar_t> dict;	
+	wstring header, hfmChar, hfmCode, hfmDecode;
 
-	string header = huffman.substr(3, header_size);
-	string hfmc = huffman.substr(header_size+3);
-	string hfmcode = convert_to_bin(hfmc, bit_num, bit_add);
-	build_dict(header, dict);
-	string decode = decode_huffman(hfmcode, dict);
+	sHeader = huffman[0];
+	nChar32 = huffman[1] - 48;
+	nAddBit = huffman[2]; // Số lượng bit thêm vào cuối.
+	header = huffman.substr(3, sHeader);
+	hfmChar = huffman.substr(sHeader + 3);
+	hfmCode = toBin(hfmChar, nChar32, nAddBit);
+	buildDict(header, dict);
+	hfmDecode = decodeHuffman(hfmCode, dict);
 
-	return decode;
+	return hfmDecode;
 }
 
