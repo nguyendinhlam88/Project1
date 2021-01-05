@@ -16,18 +16,18 @@ wchar_t* getUnicode() {
 	for(int i = 0; i < 55204; i++) {
 		if(i == 8) continue;
 		else {
-			unicode[idx] += wchar_t(i);
+			unicode[idx] = wchar_t(i);
 			idx++;
 		}
 	}
 
 	for(int i = 63744; i < 262144; i++) {
-		unicode[idx] += wchar_t(i);
+		unicode[idx] = wchar_t(i);
 		idx++;
 	}
 
 	for(int i = 917504; i < 983039; i++) {
-		unicode[idx] += wchar_t(i);
+		unicode[idx] = wchar_t(i);
 		idx++;
 	}
 	unicode[idx] = '\0';
