@@ -8,25 +8,34 @@
 using namespace std;
 
 wchar_t* readFile(string filename, int &sText, bool isCompressed) {
-	wfstream file;
+	wifstream file;
 	file.open(filename, ios::in);
 	wchar_t* fileContent;
-	int end, size;
+	unsigned int size, i, sLine;
 	wchar_t ch;
-	int index = 0;
+	wstring line;
+	unsigned int index = 0;
 
 	if(file.is_open()) {
 		file.seekg(0, ios::end);
-		end = file.tellg();
+		size = file.tellg();
 		file.seekg(0);
-		size = end;
-		fileContent  = new wchar_t[size];
+		fileContent  = new wchar_t[size+1];
+		if(fileContent == NULL) {
+			exit(1);
+		}
 		while(1) {
-			file >> noskipws >> ch;
+			line = L"";
+			getline(file, line);
+			sLine = line.length();
+			for(i = 0; i < sLine; i++) {
+				fileContent[index] = line[i];
+				index++;
+			}
 			if(file.eof()) {
 				break;
 			}
-			fileContent[index] = ch;
+			fileContent[index] = L'\n';
 			index++;
 		}
 		if(isCompressed == false) {
@@ -35,23 +44,22 @@ wchar_t* readFile(string filename, int &sText, bool isCompressed) {
 		}
 		fileContent[index] = '\0';
 		sText = index;
-		file.close();
 	} else {
 		cout << "Error in reading " << filename << endl;
 	}
+	file.close();
 
 	return fileContent;
 }
 
 void writeFile(string filename, wstring fileContent, bool isDecompressed) {
 	wofstream file;
-	file.open(filename);
+	file.open(filename, ios::out|ios::app);
 	flush(file);
-	int sText;
+	unsigned int sText, count, i;
 
 	locale::global(locale(locale(""), new codecvt_utf8<wchar_t>));
     file.imbue(locale());
-    sText = fileContent.length();
 
 	if(file.is_open()) {
 		if(isDecompressed == true) file << noskipws << fileContent.substr(0, fileContent.length()-1);

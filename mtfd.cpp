@@ -16,5 +16,6 @@ wchar_t* mTFDecoder(wstring arr, wchar_t* unicode, int n) {
 	}
 	mTFDecoder[n] = '\0';
 
+	delete []unicode;
 	return mTFDecoder;
 }

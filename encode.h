@@ -1,5 +1,2 @@
-#include <string>
-using namespace std;
-
 wchar_t* getUnicode();
-wstring encodeText(wchar_t* text, int sText);
+std::wstring encodeText(wchar_t* text, int sText);

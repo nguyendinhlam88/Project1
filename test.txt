@@ -1,281 +1,127 @@
-Contents
-Danh mục hình ảnh	2
-Bài thực hành số 5: Thực hành gỡ rối, kiểm thử và tinh chỉnh mã nguồn3
-1.1 Hướng dẫn tìm một số lỗi cú pháp (Syntax Error) thường gặp3
-1.2 Thực hành sửa lỗi cú pháp3
-Bài tập 1:  Hoán vị của n số nguyên từ 1 đến n.3
-Bài tập 2: Bài toán cái túi 5
-1.3 Hướng dẫn tìm một số lỗi thực thi (Runtime Error)6
-Bài tập 3: Dãy ngoặc đúng	6
-Phần 2. Kiểm thử	8
-2.1 Hướng dẫn8
-2.2 Thực hành8
-Bài tập 4: Bài toán người du lịch	8
-Phần 3. Tinh chỉnh mã nguồn8
-Bài tập 5: Năm nhuận8
-Bài tập 6: Tổng kết9
-Bài tập 7: Chia tiền9
-Phần 4. Bài tập về nhà10
-Bài tập 8: Cắt hình chữ nhật10
-Bài tập 9: Xây tháp10
-Danh mục hình ảnh
+ Review of A* (A Star) Navigation Mesh Pathfinding as the Alternative of Artificial Intelligent for Ghosts Agent on the Pacman Game
+Moh. Zikky1)
+Game Technology Study Program, Multimedia Creative Department
+Politeknik Elektronika Negeri Surabaya, Jl. Raya ITS Sukolilo Surabaya 1)
+Email: zikky@pens.ac.id1)
 
-Hình 1   :  Hoán vị của n số nguyên từ 1 đến n3
-Hình 2 :  Bài toán cái túi 5
-Hình 3 : Dãy ngoặc đúng7
-Hình 4  : Bài toán người du lịch	10
-Hình 5  : Năm nhuận	11
-Hình 6 : Tổng kết	13
-Hình 7 : Chia tiền	15
-Hình 8 : Cắt hình chữ nhật17
-Hình 9 : Xây tháp20
- 
-Bài thực hành số 5: Thực hành gỡ rối, kiểm thử và tinh chỉnh mã nguồn
+Abstract
+Shortest pathfinding problem has become a populer issue in Game’s Artificial Intelligent (AI). This paper discussed the effective way to optimize the shortest pathfinding problem, namely Navigation Mesh (NavMesh). This method is very interesting because it has a large area of implementation, especially in games world. In this paper, NavMesh was implemented by using A* (A star) algorithm and examined in Unity 3D game engine. A* was an effective algorithm in shortest pathfinding problem because its optimization was made with effective tracing using segmentation line. Pac-Man game was chosen as the example of the shortest pathfinding by using NavMesh in Unity 3D. A* algorithm was implemented on the enemies of Pac-Man (three ghosts),   which path was designed by using NavMesh concept. Thus, the movement of ghosts in catching Pac-Man was the result of this review of the effectiveness of this concept. In further research, this method could be implemented on several optimization programmes, such as Geographic Information System (GIS), robotics, and statistics.
+Keywords: NavMesh, Pac Man, shortest pathfinding, A*
+ 
+1.	INTRODUCTION
+Pac-Man has become a legendary video game over 1980s.  The most interesting case in Pac-man is the intelligent behavior of three ghosts (Pac-Man's enemies). They walk and catch Pac-Man wherever he goes. Three ghosts are the agents or NPC on which Artificial Intelligence (AI) algorithm is embedded. Previously, most of the algorithm used on AI is Dijkstra [1]
+Shortest pathfinding is a determining process of several objects' movement to another position without collision [2].  Actually, this method is not only used in AI game, but also used in other fields, such as Geographic Information System (GIS), robotics, and statistics, among others. Several theories have been delivered to solve the pathfinding problem, such as Finite State Machine (FSM), Graph, Dijkstra, and A*. FSM is the simplest algorithm which can be implemented in this pathfinding problem but its connection is large and the movement is easy to be predicted. Other algorithm which can be implemented in pathfinding problem is Graph.  Graph makes several waypoints depending on the weight of graph value. Other than Graph there is Dijkstra algorithm. It uses greedy principle. Greedy principle on Dijkstra algorithm shows that on each step, we choose the side which has minimum weight and put it into a set of solutions [2].
+Today’s industrial development requires optimal shortest pathfinding algorithm in solving the problem because their resources have developed very complex. To solve the problems in pathfinding algorithm, game industries have made several research and removed several parts which are not used. Finally, they find the solution namely Navigation Mesh (NavMesh). But, NavMesh can only select a reasonable path for each moving object. Navigation mesh is a technique to represent a game world using polygons. Due to its simplicity and high efficiency in representing the 3D environment, navigation mesh has become a mainstream choice for 3D games [2]. For its implementation, this paper examined NavMesh concept in Unity 3D game engine.
 
-1.1 Hướng dẫn tìm một số lỗi cú pháp (Syntax Error) thường gặp
-1.2 Thực hành sửa lỗi cú pháp
-Bài tập 1:  Hoán vị của n số nguyên từ 1 đến n.
-Đoạn code sau liệt kê tất cả các hoán vị $n$ số. Hãy tìm và sửa các lỗi cú pháp như hướng dẫn ở trên.
-
-Tên file:  20183574_NguyenDinhLam_Bai5_1.cpp
-
-#include <stdio.h>
-
-int x[100], mark[100], n;
-
-void print(){
-    for (int i = 1; i <= n; ++i) printf("%d ", x[i]);
-    printf("\n");
-}
-
-void process(int i) {
-    if (i > n){
-        print();
-        return;
-    }
-    for (int j = 1; j <= n; ++j)
-        if (!mark[j]){
-            mark[j] = 1;
-            x[i] = j;
-            process(i+1);
-            mark[j] = 0;
-        }
-}
-
-int main() {
-    printf("HO VA TEN : %s", "Nguyen Dinh Lam\n");
-    printf("MSSV      : %s", "20183574\n");
-    
-    n = 5;
-    process(1);
-    return 0;
-}
-
-Kết quả:   
-
- Hình 1
-Bài tập 2: Bài toán cái túi 
-Cho một cái túi có sức chứa $M$ và $n$ đồ vật. Đồ vật thứ $i$ có khối lượng $m_i$ và giá trị $v_i$. Cần chọn ra một số đồ vật để bỏ vào túi sao cho tổng khối lượng không quá $M$ và tổng giá trị là lớn nhất có thể. Đoạn code sau đây giải bài toán cái túi bằng phương pháp duyệt nhánh cận. Hãy tìm và sửa các lỗi cú pháp
-
-Tên file : 20183574_NguyenDinhLam_Bai5_2.cpp
-
-#include <iostream>
-using namespace std;
-
-int n, M, m[100], v[100];
-int x[100], best, sumV, sumM, all[100];
-
-void init(){
-    for (int i = n; i >= 1; --i){
-        all[i] = all[i+1] + v[i];
-    }
-}
-
-void print() {
-    cout << best;
-}
-
-void process(int i){
-    if (sumV + all[i] <= best || sumM > M) return;
-    if (i > n){
-        best = sumV;
-        return;
-    }
-    process(i+1);
-    sumM += m[i];
-    sumV += v[i];
-    process(i+1);
-    sumM -= m[i];
-    sumV -= v[i];
-}
-
-int main() {
-    cout << "HO VA TEN :  Nguyen Dinh Lam\n";
-    cout << "MSSV      : 20183574\n";
-    cin >> n >> M;
-    for (int i = 1; i <= n; ++i)
-        cin >> m[i] >> v[i];
-    init();
-    process(1);
-    print();
-    return 0;
-}
-	
-Kết quả : 
-Hình 2  
-
-1.3 Hướng dẫn tìm một số lỗi thực thi (Runtime Error)
-Bài tập 3: Dãy ngoặc đúng
-Mã nguồn dưới đây là của một sinh viên, khi submit bị lỗi runtime (Exit code is -1073741819). Sử dụng công cụ debug ở trên, hãy tìm và sửa các lỗi trong mã nguồn
-
-Tên file : 20183574_NguyenDinhLam_Bai5_3.cpp
-
-#include <iostream>
-#include <string.h>
-#include <stack>
-
-using namespace std;
+2.	RELATED WORKS
+To support the basic theory about ghost navigation (NPC in Pac-man), several concepts (research) about basic navigation mesh (NavMesh) and its features on unity 3D are discussed as follows.
+2.1	Navigation Mesh
+Navigation mesh has become a popular concept which is used in shortest pathfinding problem of 3D games because 3D environment mostly uses polygon structure. In Navigation Mesh, the properties of polygon object or terrain can guarantee a free-walk for a game character as long as the character which stays in the same polygon is a set of complex polygon [2]. 
+ 
+Figure 2.1. Pathfinding with waypoint graph and navigation mesh [3]
+As shown in Figure 2.1, there are differences between shortest pathfinding problems which use waypoint Graph and Navigation Mesh. Figure 2.1 (a) shows how graph algorithm takes a path in movement from start to goal. Graph chooses the nearest point based on the weight value which is established. There is no optimization after the process. But, if we compare it with NavMesh concept in Figure 2.1(b), the character moves from the start point to the destination/goal in a straight line. In this case, the start point is not in the same polygon as that of the goal point. The character needs to determine to which polygon it will then go. It repeats this step until both the character and the goal are located in the same polygon. Finally, the character can move to the destination in a straight line [2]. 
+ 
+Pathfinding process in navigation mesh can be implemented with several algorithms, but the most effective and popular today’s algorithm which is implemented for shortest pathfinding problem is A* (A Star) algorithm. A* is a generic search algorithm that can be used to find solutions for many problems, and pathfinding is one of them. For pathfinding, A* algorithm repeatedly examines the most promising unexplored location it has seen. When the location explored is the goal, the algorithm is finished. Otherwise, it has noted all location around for further exploration. A* is probably the most popular pathfinding algorithm in today’s AI (Artificial Intelligence) game(s) [3].
 
  
-int par(string str){
-    int a = str.length();
-    stack<char> S;
-    char x, y;
-    for (int i=0; i<a; i++){
-        x = str[i];
-        if (x == '(' || x == '[' || x == '{'){
-            S.push(x);
-        }
-        else {
-            
-            if (x == ')') {
-                if(S.empty()) return 0;
-                if (S.top() == '('){
-                    S.pop();
-                }
-                else return 0;
-            }
-            else if (x == ']') {
-                if(S.empty()) return 0;
-                if (S.top() == '['){
-                    S.pop();
-                }
-                else return 0;
-            }
-            else if (x == '}') {
-                if(S.empty()) return 0;
-                if (S.top() == '{'){
-                    S.pop();
-                }
-                else return 0;
-            }
-        }
-    }
-}
+Figure 2.2. Example of NavMesh construction [3]
+
+Figure 2.2 is the example of NavMesh implementation using P symbol as walkable area and B as blocked area/obstacle. In this mesh navigation, polygons with C symbols are chosen for navigation way of start point (Ps polygon) towards the goal point (Pg polygon); while in the navigation mapping, NavMesh needs optimum algorithm to reach the goal. First, A* algorithm chooses the shortest path by making connections among walkable polygons. Therefore, A* is able to detect the walkable polygons from the start point to the goal. Generally, A* chooses one point in every walkable polygon and then connects them until the start and the goal points make one connected line. 
+
  
-int main(){
-    int n;
-    string str;
-    
-    cout << "HO VA TEN : Nguyen Dinh Lam\n";
-    cout << "MSSV      : 20183574\n";
-    
-    cin >> n;
-    for(int i=0; i<n; i++){
-        cin >> str;
-        cout << par(str) << endl;
-    }
-    
-    return 0;
-}
+Figure 2.3. Navmesh graph and the shortest path 
 
-Kết quả : 
+Figure 2.3 shows that the yellow graph is the path point connection which can be passed by available NavMesh; while the blue line is the shortest path which is determined by A* algorithm. In this process, A* shortest pathfinding problem has not been optimized because every walkable polygon point still has weaknesses, for example the polygon with a wide area. There are several solutions of shortest pathfinding which are delivered by A* algorithm, it uses centroid point, edge midpoint, or obstacle point as shown in Figure 2.4.
 
-Hình 3 ==  
-Phần 2. Kiểm thử
-Test đề bài thường là test đơn giản, không thể kiểm tra hết các ngõ ngách logic trong chương trình. Do đó chúng ta cần sinh thêm các test khác. Các loại test nên sinh bao gồm: test ngẫu nhiên, test đặc biệt (để kiểm tra các trường hợp đặc biệt), test lớn (để kiểm tra giới hạn và thời gian chạy)
-Trong khi test đặc biệt có thể sinh bằng tay, thường nhỏ và phụ thuộc vào kinh nghiệm của lập trình viên, thì test ngẫu nhiên cần phải sinh nhiều và lớn tương đối. Do đó cần thiết phải viết chương trình sinh test và kiểm thử
+ 
+(a)	 
+(b)	 
+(c)
 
-2.1 Hướng dẫn
-2.2 Thực hành
-Bài tập 4: Bài toán người du lịch
-Cho hai vector, hãy xóa hết các phần tử chẵn, sắp xếp giảm dần các số trong cả 2 vector và trộn lại thành một vector cũng được sắp xếp giảm dần.
+Figure 2.4. Several standard pathfinding using A*; (a) pathfinding with connecting polygon centroid, (b) pathfinding with connecting edge midpoint, and (c) pathfinding with connecting obstacle corner [3]
 
-Tên file : Tên file : 20183574_NguyenDinhLam_Bai5_4.cpp
+To optimize Figure 2.4 problem, Xiao Cui and Hao Shi [1] made the solution with Triangulation concept. This concept is also used in unity 3D optimization. In triangulation optimization, the polygons are replaced with triangles.
+ 	 	 
+(a)	(b)	(c)
+Figure 2.5. Pathfinding steps (a  c) using tringulation Optimation [3]
+The triangulation optimization as shown in Figure 2.5 is made by using the minimum angle of a triangle which must be maximized. In this picture, the optimization is made by using effective tracing with segmentation line. S point symbol is the start and g point symbol is the goal. Pathfinding passes the start point to the goal point. In this case, firstly, s goes through v1 and v2 respectively. Then, on the next step, v1 goes through v3 (v3 is recognized as the shortest path which is close to the goal point). After that, Figure 2.5 (b) shows that tracing line is updated from s to v3 straightly because v3 has already established a point in the first post segmentation, then the path line from v1 to v3 is removed, and v3 must decide the next point that is traced as the start point in the previous segmentation (See figure 2.5 (c)). Finally, it continues until it reaches the goal point. The optimum path does not cross any triangle more than once.
 
-Kết quả : 
-Hình 4
-Phần 3. Tinh chỉnh mã nguồn
-Bài tập 5: Năm nhuận
-Một năm được coi là nhuận nếu hoặc nó chia hết cho 4 nhưng không chia hết cho 100, hoặc nó chia hết cho 400. Cho một danh sách các năm, kiểm tra xem có tồn tại năm nhuận trong danh sách đó hay không.
-Mã nguồn sau giải quyết bài toán đó, hãy tinh chỉnh nó để tăng hiệu suất chương trình.
+2.2	Navigation System in Unity 3D
+Unity is a cross-platform game engine which is developed and founded by Unity Technologies in 2005. Unity has released several versions, one of which is the newest version, namely 5.2.2 which has new feature called NavMesh path library.
 
-Tên file : 20183574_NguyenDinhLam_Bai5_5.cpp
-#include <bits/stdc++.h>
-using namespace std;
+ 
+Figure 2.6 Navigation Mesh System Components [4]
+As shown in Figure 2.6, there are some components which implement NavMesh system in Unity, such as: NavMesh, NavMesh Obstacle, Navmesh Agent, and OffMeshLink. NavMesh is a polygon structure which describes the walkable surfaces of the game world and allows us to find path from one walkable location to another one in the game world; NavMesh Agent is a component which can move towards the goal on NavMesh surface, so the agent can avoid the obstacle; NavMesh Obstacle is an object which should be avoided by the agent’s movement; and OffMeshLink is a  connection point which allows us to incorporate navigation shortcuts which cannot be represented when using a walkable surface.
 
-int main(){
-    int n;
-    
-    cout << "HO VA TEN : Nguyen Dinh Lam\n";
-    cout << "MSSV      : 20183574\n";
-    cin >> n;
-    while(n--){
-        int a;
-        cin >> a;
-        if ((a % 4 == 0 && a % 100 != 0) || (a % 400 == 0)) {
-            cout << "Yes";
-            break;
-        }
-    }
-    if(n == 0) cout << "No";
-}	
+3. SYSTEM DESIGN
+In the system design process, we designed the area of PacMan Game, then determined the obstacle, and created the actors including player, agent/NPC, and bonus actors.
 
-Kết quả : 
-	 
-Hình 5  
+ 
+ 
+   
 
-Bài tập 6: Tổng kết
+Game arena	Determining obstacle and NavMesh area	Making and determining player, agents, and point objects
+	 	 
+Figure 3.1. Flow diagram of NavMesh implementation on Pac Man Game using Unity 3D
 
-Một lớp có 𝑛n sinh viên. Sinh viên thứ 𝑖i có điểm tổng kết là 𝑎𝑖ai theo thang điểm 10. Để đánh giá chất lượng dạy học, giảng viên muốn biết có bao nhiêu bạn đạt điểm A, B, C, D, F. Quy đổi thang điểm được cho như sau:
-a<4           : F
-4 ≤ a < 5.5: D
-5.5 ≤ a < 7: C
-7 ≤ a < 8.5: B
-8.5 ≤ a      : A
-Mã nguồn sau giải quyết bài toán đó, hãy tinh chỉnh nó để tăng hiệu suất chương trình.
+As shown in Figure 3.1, there were five steps to examine the movement of agent on navigation mesh. Game arena was made in unity using a terrain. We created the obstacle by using object as the wall. Then, we determined the path of NavMesh surfaces and the outside area which were unwalkable by the actors, and then, we created and determined the actor (red color) as the pac-man, the white ball as the ghosts (pac-man’s enemies), and the orange box as the bonus point. After that, we put the ghosts randomly in the arena and we connected to the actor with NavMesh A* as a pathfinding agent. If one of the ghosts collided with the actor, the health point of the actor would be decreasing. But if the health point became 0 (zero), the game was over.
+
+4. RESULTS
+A.	Dijkstra and A* concept in shortest pathfinding
+To ensure the effectivity of A* implementation, the comparison between Dijkstra and A* algorithm for searching the pathfinding was shown in the following figures. 
+ 
+ 
+ 
+
+(a) Start	(b) Search process	(c) Find the goal
+Figure 4.1. Dijkstra pathfinding processing
+Figure 4.1 showed how dijkstra algorithm worked to find the goal. In this picture, the searching process was reached with radial search segmentation. The start agent caught the goal by detecting paths arround it until the goal agent entered the inside of the radial search area. Thus, the agent took the path towards the goal. This method was different from A* algorithm as shown in Figure 4.2
+ 	 	 
+(a) Start	(b) Search process	(c) Find the goal
+Figure 4.2. A* pathfinding processing
+Figure 4.2 showed how the start agent searched and caught the goal. The agent just tried in one radial layer around it, then pointed the best direction to the nearest point of the goal until it caught the goal. So, if it was compared to Dijkstra pathfinding concept, A* had more efficient way and its pathfinding’s time was shorter than Dijkstra pathfinding.
+B.	Dijkstra and A* concept in shortest pathfinding with wall obstacle
+Here, it was examined how Dijkstra algorithm and A* Algorithm worked in shortest pathfinding problem with the obstacle. Figure 4.3 showed the differences between Dijkstra and A* method in the shortest pathfinding.
+ 
+ 
+
+(a) Using dijkstra algorithm	(b) Using A* algorithm
+Figure 4.3. Shortes pathfinding concept with obstacle
+Figure 4.3 showed how the agent caught the goal by using Dijkstra algorithm, while A* algorithm caught the goal by using wall obstacle. The colors of pattern which existed around the start agent showed how the agent detected the goal. Figure 4.3 (a) showed that the discovery area was larger than what was shown on Figure 4.3 (b) which was very simple and effective.
+
+C.	 A* implementation in Pacman Game using Unity 3D
+By placing several ghost agents randomly, we could detect the behavior resulted by navigation mesh step by using A* algorithm implemented to the character. To know how this method ran effectively, we captured several experiments as follows:
+1.	Placing the actor in the center between two obstacles/walls. 
+The result was that the enemy ran towards the player straightly. Detailed result was shown in Figure 4.4.
+ 
+Figure 4.4. The movement of the enemy, it walked straightly towards the Actor (Red ball)
+
+2.	Placing the actor near the border of the arena and letting one of the enemies stayed beside another wall.
+The result was that the enemy walked to the actor through the obstacle edge, meaning that it took shorter path rather than enemy's way to the actor. 
+ 
+Figure 4.4. The movement of enemy, it walked through the obstacle edge towards the Actor (Red ball)
+  6. CONCLUSION
+It is concluded that Navigation Mesh (NavMesh) and A* algorithm had become the best solution in solving the shortest pathfinding problem for today's industrial need. 
+The comparison between dijkstra and A* shortest pathfinding problem was different in the concept of pathfinding’s area. Dijkstra detected the goal by radial detection mode, while  A* used one radial’s layer around it, and then pointed the best direction to the nearest point of the goal. It repeated until it caught the goal.
+As comparison on Figure 4.1, 4.2, and 4.3 experiment, navigation mesh with A* algorithm was the more effective pathfingding than Djikstra algorithm. The data of comparison was shown in Table 1.
+Table 1. NavMesh with A* algoritm and Djikstra Algoritm comparation
+Experiment	Name of Algoritm	Steps to catch the goal
+Figure 4.1	A* algoritm	43 steps
+Figure 4.2	Djikstra	348 steps
+Figure 4.3	A* algoritm	33 steps
+	Djikstra	111 steps
+The implementation of navigation mesh (NavMesh) process in 3D polygon surfaces was the key of effective mapping search. By using this method, the agent did not need to explore the unwalkable area. Therefore, updating path with straight line and minimizing the corner point in connecting start towards the goal using A* algorithm had become the best way and the core of effectiveness in A* optimization.
 
 
-Tên file : 20183574_NguyenDinhLam_Bai5_6.cpp
-#include <bits/stdc++.h>
-using namespace std;
 
-int main(){
-    int n;
-    double a;
 
-    cout << "HO VA TEN : Nguyen Dinh Lam\n";
-    cout << "MSSV      : 20183574\n";
-    cin >> n;
-    int A = 0, B = 0, C = 0, D = 0, F = 0;
-    while(n--){
-        cin >> a;
-        if (a >= 8.5) ++A;
-        else if (7 <= a && a < 8.5) ++B;
-        else if (5.5 <= a && a < 7) ++C;
-        else if (4 <= a && a < 5.5) ++D;
-        else ++F;
-    }
-    cout << A << " " << B << " " << C << " " << D << " " << F;
 
-    return 0;
-}
 
-Kết quả : 
-Hình 6
-Bài tập 7: Chia tiền
 
-Sau đại dịch, thầy trò Đường Tăng muốn xin tiền của các nhà giàu để chia cho các nhà nghèo. Họ sẽ vào 𝑛n thôn, thôn thứ 𝑖i có 𝑘𝑖ki nhà. Mỗi thôn họ sẽ quyết định xin tiền hay cho tiền, phụ thuộc vào đánh giá của họ về mức độ giàu nghèo ở đây. Nếu thôn 𝑖i giàu, họ sẽ đi từng nhà trong số 𝑘𝑖ki nhà này và xin 𝑎𝑖,𝑗ai,j tiền của nhà thứ 𝑗j. Nếu thôn 𝑖i nghèo, họ sẽ đi từng nhà trong số 𝑘𝑖ki nhà này và phát 𝑎𝑖,𝑗ai,j tiền cho nhà thứ 𝑗j. Hãy tính số tiền ít nhất họ phải mang theo để đảm bảo có thể phát đủ cho người nghèo (tức số tiền luôn không bị âm)
-Mã nguồn sau giải quyết bài toán đó, hãy tinh chỉnh nó để tăng
-hiệu suất chương trình.
-Hình 9
+
+REFERENCES
+[1]	Mahardiansyah Kartika, Dijkstra’s Algorithm Application on the Pac-Man Game, Makalah IF2091 Struktur Diskrit Program Studi Teknik Informatika STEI ITB Bandung, 2010-2011.
+[2]	Xiao Cui and Hao Shi, An Overview of Pathfinding in Navigation Mesh, IJCSNS International Journal of Computer Science and Network Security, 48 VOL.12 No.12, 2012. 
+[3]	Xiao Cui and Hao Shi, A*-based Pathfinding in Modern Computer Games, IJCSNS International Journal of Computer Science and Network Security, 48 VOL.11 No.12, 2011
+[4]	Official Website of 3D Game Engine http://unity3d.com, accesed on October 2015
+[5]	Shortest Pathfinding, http://qiao.github.io/PathFinding.js/visual/, accesed on November 2015

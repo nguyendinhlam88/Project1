@@ -6,7 +6,7 @@ using namespace std;
 
 int findCharLoc(wchar_t* unicode, wchar_t ch) {
 
-	for(int i = 0; i < 319137; i++) {
+	for(int i = 0; i < 325542; i++) {
 		if(unicode[i] == ch) return i;
 	}
 
@@ -35,6 +35,8 @@ wchar_t* mTFEncoder(wchar_t* arr, wchar_t* unicode, int n) {
 		else mTFEncoder[i] = wchar_t(loc);
 		if (loc != 0) changeUnicode(unicode, loc);
 	}
+	delete [] arr;
+	delete []unicode;
 
 	return mTFEncoder;
 }

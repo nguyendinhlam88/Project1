@@ -182,7 +182,7 @@ void getHuffmanEncoder(Node root, map<wchar_t, wstring> &dict, wstring &xau, wst
 // Chuyển các dãy 32 bit nhị phân tới wchar_t.
 wstring toChar(wstring huffman, wstring &nChar32, wchar_t &nAddBit) {
 	wstring toChar = L"", bit0 = L"0000000000000000000000000000000";
-	unsigned int size, index, sum;
+	int size, index, sum;
 	bool chkFirst;
 
 	nChar32 = L"";
@@ -209,7 +209,7 @@ wstring toChar(wstring huffman, wstring &nChar32, wchar_t &nAddBit) {
 				if(huffman[(index/15)*15 + i] == L'1') sum += pow(2, 14 - i);
 			}
 		}
-		if(chkFirst == false && ((sum > 55203 && sum < 63744) || (sum > 262144 && sum < 917504) || sum > 983039)) {
+		if(chkFirst == false && ((sum > 55203 && sum < 57344) || (sum > 262144 && sum < 917504) || sum > 983039)) {
 			chkFirst = true;
 			nChar32 += wchar_t(index/32 + 48);
 			continue;
@@ -244,5 +244,6 @@ wstring hfmEncoder(wchar_t* arr, int n) {
 	toChar1 = toChar(hfmEncoder, nChar32, nAddBit);
 	hfmEncoder = wchar_t(header.length()) + nChar32 + nAddBit + header + toChar1;
 
+	delete []arr;
 	return hfmEncoder;
 }

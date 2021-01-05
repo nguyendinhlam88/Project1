@@ -1,4 +1,2 @@
-using namespace std;
-
-wchar_t* readFile(string filename, int &sText, bool isCompressed);
-void writeFile(string filename, wstring text, bool isDecompressed);
+wchar_t* readFile(std::string filename, int &sText, bool isCompressed);
+void writeFile(std::string filename, std::wstring text, bool isDecompressed);

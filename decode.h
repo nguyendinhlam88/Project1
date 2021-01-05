@@ -1,4 +1,1 @@
-#include <string>
-using namespace std;
-
-wchar_t* decodeText(wstring text);
+wchar_t* decodeText(wchar_t* text, int sText);
