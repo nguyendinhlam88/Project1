@@ -31,6 +31,14 @@ git clone + https://github.com/nguyendinhlam88/Project1.git
 2. I use pipeline for build this project : 
 > BWT \> Move To Front \> Huffman
 3. unicode : Unicode 13.0(Only use public unicode character for build unicode in MTF).
+
+## File for test
+> Luồng file xử lý sự kiện : a.txt \> 1a.txt \> Archive.txt
+
+### Test File
+1. test.txt
+2. dickens.txt
+
 ## References
 - [1] Burrows, Michael; Wheeler, David J. (1994), [A block sorting lossless data compression algorithm](https://www.hpl.hp.com/techreports/Compaq-DEC/SRC-RR-124.html), Technical Report 124, Digital Equipment Corporation
 - [2] Ryabko, B. Ya Data compression by means of a "book stack”, Problems of Information Transmission, 1980
