@@ -38,7 +38,8 @@ git clone + https://github.com/nguyendinhlam88/Project1.git
 ### Test File
 1. test.txt
 2. dickens.txt
-
+3. chrom.txt
+### Support for unicode 32 bit file.
 ## References
 - [1] Burrows, Michael; Wheeler, David J. (1994), [A block sorting lossless data compression algorithm](https://www.hpl.hp.com/techreports/Compaq-DEC/SRC-RR-124.html), Technical Report 124, Digital Equipment Corporation
 - [2] Ryabko, B. Ya Data compression by means of a "book stack”, Problems of Information Transmission, 1980
